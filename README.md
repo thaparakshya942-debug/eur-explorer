@@ -32,7 +32,7 @@ streamlit run app.py
 ## Limitations
 These are official daily reference rates, not live trading rates, and are
 not published on weekends or ECB holidays. Actual bank/exchange rates will
-typically include an additional margin or fee.
+typically include an additional margin or fee. Additionally, we are only able to compare currencies against the EURO so for example we cannot compare USD against DKK.
 
 ## AI tools used
 [Fill in honestly, e.g.:
