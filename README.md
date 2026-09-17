@@ -35,10 +35,9 @@ not published on weekends or ECB holidays. Actual bank/exchange rates will
 typically include an additional margin or fee. Additionally, we are only able to compare currencies against the EURO so for example we cannot compare USD against DKK.
 
 ## AI tools used
-[Fill in honestly, e.g.:
-"We used Claude (Anthropic) to help us understand the Frankfurter API,
+We used Claude (Anthropic) to help us understand the Frankfurter API,
 build and debug the Streamlit app's error handling, and draft this README.
-All code was reviewed and tested by the group before submission."]
+All code was reviewed and tested by the group before submission.
 
 ## Group members
 Rakshya Thapa, Brett Taylor Ulsh, Simon Høg Sørensen, Matthias Balthasar Nielsen
