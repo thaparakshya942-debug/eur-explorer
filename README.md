@@ -41,4 +41,5 @@ build and debug the Streamlit app's error handling, and draft this README.
 All code was reviewed and tested by the group before submission."]
 
 ## Group members
-[Fill in names]
+Rakshya Thapa, Brett Taylor Ulsh, Simon Høg Sørensen, Matthias Balthasar Nielsen
+
