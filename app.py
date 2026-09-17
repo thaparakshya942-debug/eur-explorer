@@ -88,7 +88,19 @@ with st.sidebar:
         value=(default_start, today),
     )
 
+    st.divider()
+
+    # --- Converter controls -------------------------------------------------
+    st.header("💱 Converter")
+    amount = st.number_input("Amount", min_value=0.0, value=100.0, step=10.0)
+
 target = CURRENCIES[currency_name]
+
+with st.sidebar:
+    conv_direction = st.radio(
+        "Direction",
+        [f"EUR → {target}", f"{target} → EUR"],
+    )
 
 if start_date >= end_date:
     st.error("The start date must be before the end date. Please adjust the range in the sidebar.")
@@ -108,7 +120,29 @@ with st.spinner("Fetching live exchange rate data..."):
         st.stop()
 
 # ---------------------------------------------------------------------------
-# 5. Visualization — one clear comparison chart
+# 5. Converter — quick value-to-value conversion using the latest rate
+# ---------------------------------------------------------------------------
+latest_rate = df["rate"].iloc[-1]
+
+if conv_direction.startswith("EUR"):
+    converted = amount * latest_rate
+    from_ccy, to_ccy = "EUR", target
+else:
+    converted = amount / latest_rate
+    from_ccy, to_ccy = target, "EUR"
+
+conv_col, chart_col = st.columns([1, 2])
+
+with conv_col:
+    st.metric(
+        label=f"{amount:,.2f} {from_ccy} converts to",
+        value=f"{converted:,.2f} {to_ccy}",
+        help=f"Using the most recent rate in the selected range: 1 EUR = {latest_rate:.4f} {target}",
+    )
+    st.caption(f"Rate date: {df['date'].iloc[-1].date()}")
+
+# ---------------------------------------------------------------------------
+# 6. Visualization — one clear comparison chart
 # ---------------------------------------------------------------------------
 pct_change = (df["rate"].iloc[-1] / df["rate"].iloc[0] - 1) * 100
 direction = "strengthened" if pct_change > 0 else "weakened"
@@ -121,7 +155,9 @@ fig = px.line(
     title=f"EUR vs {target}: {start_date} to {end_date}",
 )
 fig.update_layout(height=440, margin=dict(t=50, b=0))
-st.plotly_chart(fig, use_container_width=True)
+
+with chart_col:
+    st.plotly_chart(fig, use_container_width=True)
 
 c1, c2, c3 = st.columns(3)
 c1.metric(f"Start rate ({start_date})", f"{df['rate'].iloc[0]:.4f}")
@@ -134,14 +170,15 @@ st.markdown(
 )
 
 # ---------------------------------------------------------------------------
-# 6. Explanation + data limitation (required by the assignment)
+# 7. Explanation + data limitation (required by the assignment)
 # ---------------------------------------------------------------------------
 st.markdown("### What this shows")
 st.write(
     f"This chart tracks the exchange rate of 1 Euro to **{currency_name}** "
     f"from **{start_date}** to **{end_date}**, using daily reference rates "
     "published by the European Central Bank via the Frankfurter API. Use the "
-    "sidebar to compare a different currency or change the date range."
+    "sidebar to compare a different currency, change the date range, or "
+    "convert a specific amount."
 )
 
 st.markdown("### ⚠️ Data limitation")
@@ -150,11 +187,12 @@ st.write(
     "European Central Bank, not live, second-by-second trading rates. Rates "
     "are also not published on weekends or ECB holidays, so the chart may show "
     "small gaps on those dates. Actual rates you'd get from a bank or currency "
-    "exchange service will typically include an additional margin or fee."
+    "exchange service will typically include an additional margin or fee — the "
+    "converter above is therefore indicative, not a real trading quote."
 )
 
 # ---------------------------------------------------------------------------
-# 7. Let the user take the data home
+# 8. Let the user take the data home
 # ---------------------------------------------------------------------------
 st.download_button(
     "📥 Download this data (CSV)",
